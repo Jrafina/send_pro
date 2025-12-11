@@ -50,15 +50,41 @@ jobs:
         username: ${{ secrets.EMAIL_USERNAME }}
         password: ${{ secrets.EMAIL_PASSWORD }}
         
-        # 邮件内容
-        subject: "叮~您的今日推送已到达"
+        # 邮件内容 - 活泼版
+        subject: "✨ 叮咚！您的专属日报已送达！✨"
         body: |
-          ===================
+          🌈 早上好 🌈
+          
+          🎉 今日份的精彩内容已经为您准备好啦！快来看看吧~ 🎉
+          
+          ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
+          
+          📢 <b>今日热搜榜新鲜出炉！</b> 📢
+          
+          💫 为您精选了最热门的3条资讯：
+          
           ${{ env.CRAWLER_OUTPUT }}
-          ===================
+          
+          ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
+          
+          🌤️ <b>贴心天气小贴士</b> 🌤️
+          
+          ${{ env.CRAWLER_OUTPUT }}
+          
+          ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
+          
+          💝 温馨提示： 
+          • 出门记得关注天气变化哦！
+          • 热门话题跟上潮流不掉队！
+          • 祝您拥有美好的一天！ 🌸
+
+          🤖 来自：您的贴心小助手
+          ⚡ 由 GitHub Actions 自动推送
+          💌 每日为您精选资讯
+          ====================================
           
         # 收件人邮箱
         to: ${{ secrets.NOTIFICATION_EMAIL }}
-        from: GitHub Actions Crawler
+        from: GitHub Actions 小助手
         # 使用SSL加密
         secure: true
