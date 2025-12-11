@@ -6,7 +6,7 @@ from lxml import etree
 header = {
         'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0'
     }
-print("*"*25+"以下是热搜"+"*"*25)
+print("*"*12+"以下是热搜"+"*"*12)
 url_top = "https://api.rebang.today/v1/items?tab=top&sub_tab=today&page=1&version=1"
 r_top = requests.get(url = url_top,headers=header)
 list1 = r_top.json()["data"]["list"]
@@ -20,7 +20,7 @@ for desc,url in dic1.items():
     print(desc+url +"\n")
 
 
-print("*"*25+"以下是天气"+"*"*25)
+print("*"*12+"以下是天气"+"*"*12)
 url = "https://www.weather.com.cn/weather/101270102.shtml"
 r = requests.get(url=url,headers=header)
 r.encoding = r.apparent_encoding

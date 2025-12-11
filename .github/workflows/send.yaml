@@ -51,16 +51,11 @@ jobs:
         password: ${{ secrets.EMAIL_PASSWORD }}
         
         # 邮件内容
-        subject: "爬虫结果通知 - ${{ github.workflow }}"
+        subject: "叮~您的今日推送已到达"
         body: |
-          爬虫执行时间: ${{ steps.crawler.outcome }}
-          
-          爬虫输出结果:
           ===================
           ${{ env.CRAWLER_OUTPUT }}
           ===================
-          
-          工作流详情: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           
         # 收件人邮箱
         to: ${{ secrets.NOTIFICATION_EMAIL }}
