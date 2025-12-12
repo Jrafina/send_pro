@@ -47,5 +47,5 @@ html = etree.HTML(r_top.text)
 price = html.xpath('//div[@class="discount_final_price"][1]/text()')[0].strip()
 name = html.xpath('//div[@class = "responsive_search_name_combined"][1]//span/text()')[0].strip()
 print(name +"的价格是："+price)  
-test = "¥220.00"
+test = price
 print("test:",test)
