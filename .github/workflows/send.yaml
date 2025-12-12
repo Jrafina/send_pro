@@ -2,7 +2,7 @@ name: Daily Crawler with Email Notification
 
 on:
   push: 
-    branchs:
+    branches:
     - main
   schedule:
     # 每天UTC时间00:00运行（北京时间08:00）
@@ -11,7 +11,7 @@ on:
 
 jobs:
   run-crawler-and-notify:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     
     steps:
     - name: Checkout repository
@@ -36,37 +36,46 @@ jobs:
         
         # 读取完整输出
         FULL_OUTPUT=$(cat output.txt)
+        echo "原始输出长度: ${#FULL_OUTPUT} 字符"
         
         # 提取热搜部分（从"************以下是热搜************"到"************以下是天气************"之前）
-        HOT_TOPICS=$(echo "$FULL_OUTPUT" | sed -n '/\*\{12\}以下是热搜\*\{12\}/,/\*\{12\}以下是天气\*\{12\}/p' | head -n -1)
-        # 清理热搜内容，移除分隔符行
-        HOT_TOPICS=$(echo "$HOT_TOPICS" | sed '1d' | sed 's/^\*\{12\}以下是热搜\*\{12\}$//')
-
+        HOT_TOPICS=$(echo "$FULL_OUTPUT" | awk '/^\*{12}以下是热搜\*{12}$/{flag=1; next} /^\*{12}以下是天气\*{12}$/{flag=0} flag')
+        
         # 提取天气部分（从"************以下是天气************"到"************以下是查价************"之前）
-        WEATHER_INFO=$(echo "$FULL_OUTPUT" | sed -n '/\*\{12\}以下是天气\*\{12\}/,/\*\{12\}以下是查价\*\{12\}/p' | head -n -1)
-        # 清理天气内容，移除分隔符行
-        WEATHER_INFO=$(echo "$WEATHER_INFO" | sed '1d')
-
+        WEATHER_INFO=$(echo "$FULL_OUTPUT" | awk '/^\*{12}以下是天气\*{12}$/{flag=1; next} /^\*{12}以下是查价\*{12}$/{flag=0} flag')
+        
         # 提取游戏价格（从"************以下是查价************"到文件结尾）
-        GAMEPRICE=$(echo "$FULL_OUTPUT" | sed -n '/\*\{12\}以下是查价\*\{12\}/,$p')
-        # 清理游戏价格内容，移除分隔符行
-        GAMEPRICE=$(echo "$GAMEPRICE" | sed '1d')
-
-
-        # 分别设置环境变量，限制大小避免超限
-        echo "HOT_TOPICS<<EOF" >> $GITHUB_ENV
-        echo "$HOT_TOPICS" | head -c 800 >> $GITHUB_ENV
-        echo "EOF" >> $GITHUB_ENV
+        GAMEPRICE=$(echo "$FULL_OUTPUT" | awk '/^\*{12}以下是查价\*{12}$/{flag=1; next} flag')
         
-        echo "WEATHER_INFO<<EOF" >> $GITHUB_ENV
-        echo "$WEATHER_INFO" | head -c 200 >> $GITHUB_ENV
-        echo "EOF" >> $GITHUB_ENV
-
-        echo "GAMEPRICE<<EOF" >> $GITHUB_ENV
-        echo "$GAMEPRICE" | head -c 200 >> $GITHUB_ENV
-        echo "EOF" >> $GITHUB_ENV
+        # 去除每部分的首尾空白行
+        HOT_TOPICS=$(echo "$HOT_TOPICS" | sed '/^$/d' | head -20)
+        WEATHER_INFO=$(echo "$WEATHER_INFO" | sed '/^$/d')
+        GAMEPRICE=$(echo "$GAMEPRICE" | sed '/^$/d')
         
-        # 将完整输出保存为artifact
+        # 调试信息
+        echo "热搜提取长度: ${#HOT_TOPICS} 字符"
+        echo "天气提取长度: ${#WEATHER_INFO} 字符"
+        echo "游戏价格提取长度: ${#GAMEPRICE} 字符"
+        
+        # 设置环境变量 - 使用更安全的方式
+        {
+          echo "HOT_TOPICS<<EOF"
+          echo "$HOT_TOPICS"
+          echo "EOF"
+        } >> $GITHUB_ENV
+        
+        {
+          echo "WEATHER_INFO<<EOF"
+          echo "$WEATHER_INFO"
+          echo "EOF"
+        } >> $GITHUB_ENV
+        
+        {
+          echo "GAMEPRICE<<EOF"
+          echo "$GAMEPRICE"
+          echo "EOF"
+        } >> $GITHUB_ENV
+        
         echo "爬虫运行完成，内容已提取"
         
     - name: Upload output as artifact
@@ -86,7 +95,7 @@ jobs:
         username: ${{ secrets.EMAIL_USERNAME }}
         password: ${{ secrets.EMAIL_PASSWORD }}
         
-        # 邮件内容 - 活泼版
+        # 邮件内容
         subject: "✨ 叮咚！您的专属日报已送达！✨"
         body: |
           🌈 早上好 🌈
