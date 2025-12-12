@@ -36,21 +36,14 @@ print(today_tem_whe)
 
 
 print("*"*12 + "以下是查价"+"*"*12)
-param = {"snr": "1_12_4__7", "term": "Sid Meier’s Civilization® VI"}
-url_game = "https://store.steampowered.com/search"
-success = False
-for i in range(3):
-    try:
-        r_game = requests.get(url=url_game, headers=header, params=param, timeout=10)
-        html = etree.HTML(r_game.text)
-        price = html.xpath('//div[@class="discount_final_price"][1]/text()')[0].strip()
-        name = html.xpath('//div[@class = "responsive_search_name_combined"][1]//span/text()')[0].strip()
-        print(f"{name}的价格是：{price}")
-        success = True
-        break
-    except:
-        if i < 2:
-            time.sleep(1)
-            continue
-if not success:
-    print("错误输出，请检查程序")
+param = {
+    "snr":"1_12_4__7",
+    "term":"Sid Meier’s Civilization® VI"
+}
+url_top = "https://store.steampowered.com/search?snr=1_12_4__7&term=Sid Meier’s Civilization® VI"
+r_top = requests.get(url=url_top, headers=header, params=param)
+# 解析 HTML 内容
+html = etree.HTML(r_top.text)
+price = html.xpath('//div[@class="discount_final_price"][1]/text()')[0].strip()
+name = html.xpath('//div[@class = "responsive_search_name_combined"][1]//span/text()')[0].strip()
+print(name +"的价格是："+price)  
