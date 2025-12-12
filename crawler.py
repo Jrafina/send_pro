@@ -38,9 +38,9 @@ print(today_tem_whe)
 print("*"*12 + "以下是查价"+"*"*12)
 param = {
     "snr":"1_12_4__7",
-    "term":"Sid Meier’s Civilization® VI"
+    "term":"terraria"
 }
-url_top = "https://store.steampowered.com/search?snr=1_12_4__7&term=Sid Meier’s Civilization® VI"
+url_top = "https://store.steampowered.com/search?snr=1_12_4__7&term=terraria"
 r_top = requests.get(url=url_top, headers=header, params=param)
 # 解析 HTML 内容
 html = etree.HTML(r_top.text)
