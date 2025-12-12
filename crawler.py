@@ -6,7 +6,8 @@ import time
 
 print("*"*12 + "以下是热搜"+"*"*12)
 header = {
-        'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0'
+    "Accept-Language": "zh-CN,zh;q=0.9",
+    'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0'
     }
 
 url_hotsearch = "https://api.rebang.today/v1/items?tab=top&sub_tab=today&page=1&version=1"
