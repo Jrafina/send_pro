@@ -37,16 +37,22 @@ jobs:
         # 读取完整输出
         FULL_OUTPUT=$(cat output.txt)
         
-        # 提取热搜部分（从"************以下是热搜************"到"************以下是天气************"之间的内容）
-        HOT_TOPICS=$(echo "$FULL_OUTPUT" | sed -n '/\*\{12\}以下是热搜\*\{12\}/,/以下是天气/p' | head -n -1)
+        # 提取热搜部分（从"************以下是热搜************"到"************以下是天气************"之前）
+        HOT_TOPICS=$(echo "$FULL_OUTPUT" | sed -n '/\*\{12\}以下是热搜\*\{12\}/,/\*\{12\}以下是天气\*\{12\}/p' | head -n -1)
         # 清理热搜内容，移除分隔符行
         HOT_TOPICS=$(echo "$HOT_TOPICS" | sed '1d' | sed 's/^\*\{12\}以下是热搜\*\{12\}$//')
-        
-        # 提取天气部分（从"************以下是天气************"到文件结尾）
-        WEATHER_INFO=$(echo "$FULL_OUTPUT" | sed -n '/\*\{12\}以下是天气\*\{12\}/,$p')
+
+        # 提取天气部分（从"************以下是天气************"到"************以下是查价************"之前）
+        WEATHER_INFO=$(echo "$FULL_OUTPUT" | sed -n '/\*\{12\}以下是天气\*\{12\}/,/\*\{12\}以下是查价\*\{12\}/p' | head -n -1)
         # 清理天气内容，移除分隔符行
         WEATHER_INFO=$(echo "$WEATHER_INFO" | sed '1d')
-        
+
+        # 提取游戏价格（从"************以下是查价************"到文件结尾）
+        GAMEPRICE=$(echo "$FULL_OUTPUT" | sed -n '/\*\{12\}以下是查价\*\{12\}/,$p')
+        # 清理游戏价格内容，移除分隔符行
+        GAMEPRICE=$(echo "$GAMEPRICE" | sed '1d')
+
+
         # 分别设置环境变量，限制大小避免超限
         echo "HOT_TOPICS<<EOF" >> $GITHUB_ENV
         echo "$HOT_TOPICS" | head -c 800 >> $GITHUB_ENV
@@ -54,6 +60,10 @@ jobs:
         
         echo "WEATHER_INFO<<EOF" >> $GITHUB_ENV
         echo "$WEATHER_INFO" | head -c 200 >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
+
+        echo "GAMEPRICE<<EOF" >> $GITHUB_ENV
+        echo "$GAMEPRICE" | head -c 200 >> $GITHUB_ENV
         echo "EOF" >> $GITHUB_ENV
         
         # 将完整输出保存为artifact
@@ -99,9 +109,16 @@ jobs:
           
           ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
           
-          💝 温馨提示： 
+          🎮 游戏价格小贴士 🎮
+          
+          ${{ env.GAMEPRICE }}
+          
+          ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
+          
+          💝 温馨提示：
+          • 热门话题跟上潮流不掉队！ 
           • 出门记得关注天气变化哦！
-          • 热门话题跟上潮流不掉队！
+          • 经典游戏价格及时查询喔！
           • 祝您拥有美好的一天！ 🌸
 
           🤖 来自：您的贴心小助手
