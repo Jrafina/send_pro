@@ -13,5 +13,5 @@ r_top = requests.get(url=url_top, headers=header)
 #     f.write(r_top.text)
 html = etree.HTML(r_top.text)
 price = html.xpath("//*[@id='game_area_purchase_section_add_to_cart_123215']/div[2]/div/div[1]/text()")
-price = re.search(r'[\d.]+', data[0]).group()
+price = re.search(r'[\d.]+', price[0]).group()
 print(price)  # 输出: 220.00
